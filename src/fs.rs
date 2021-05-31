@@ -1,5 +1,5 @@
-use fstab::FsEntry;
 use crate::print_log;
+use crate::LogLevel;
 use nix::mount::mount;
 use nix::mount::MsFlags;
 use nix::sys::stat;
@@ -43,8 +43,8 @@ pub fn mount_from_fstab() {
                         _ => {}
                     }
                 }
-                nix::unistd::mkdir(&src, stat::Mode::S_IRWXU);
-                mount(Some(&src), &dst, Some(&fs_spec), str_opts, None);
+                nix::unistd::mkdir(src.as_str(), stat::Mode::S_IRWXU);
+                mount(Some(src.as_str()), dst.to_str().unwrap(), Some(fs_type.as_str()), mount_flags, Some("mode=620"));
             }
         }
         Err(_) => {
