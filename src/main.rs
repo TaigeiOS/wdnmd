@@ -1,4 +1,5 @@
 mod unsafe_ops;
+mod fs;
 
 use nix::unistd;
 use std::process::{Command, exit};
@@ -7,6 +8,7 @@ use nix::mount::MsFlags;
 use nix::sys::stat::{mknod, SFlag, Mode, makedev};
 use crate::unsafe_ops::{put_env, block_signals, run_containerd, run_program};
 use nix::unistd::Pid;
+use crate::fs::mount_from_fstab;
 
 // Consts
 
@@ -90,6 +92,8 @@ fn main() {
     mknod("/dev/null", SFlag::S_IFCHR, usr_perm_6 | grp_perm_6 | oth_perm_6, makedev(1, 3));
     mknod("/dev/kmsg", SFlag::S_IFCHR, usr_perm_6 | grp_perm_6, makedev(1, 11));
 
+    // Mount other fs
+    mount_from_fstab();
     // Run container
     run_containerd();
     // Run tty
